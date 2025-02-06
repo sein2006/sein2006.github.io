@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор карты</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        .card { width: 100px; height: 150px; margin: 10px; display: inline-block; border: 2px solid black; }
+    </style>
+</head>
+<body>
+    <h1>Выберите карту</h1>
+    <div id="cards"></div>
+    <button onclick="sendChoice()">Выбрать</button>
+
+    <script>
+        let selectedCard = null;
+        const cards = ['🃏', '♥️', '♦️', '♣️', '♠️'];
+
+        const cardsContainer = document.getElementById("cards");
+        cards.forEach((card, i) => {
+            let div = document.createElement("div");
+            div.className = "card";
+            div.textContent = card;
+            div.onclick = () => { selectedCard = card; alert("Вы выбрали: " + card); };
+            cardsContainer.appendChild(div);
+        });
+
+        function sendChoice() {
+            if (!selectedCard) return alert("Выберите карту!");
+            Telegram.WebApp.sendData(selectedCard);
+            Telegram.WebApp.close();
+        }
+    </script>
+</body>
+</html>
