@@ -19,8 +19,9 @@
     <script>
         let selectedCard = null;
 
-        // Список картинок (замени ссылки на свои)
+        // Исходная картинка для всех карт
         const defaultImage = "https://sein2006.github.io/0.png";
+        // Массив картинок с номерами (замени ссылки на свои)
         const newImages = [
             "https://sein2006.github.io/1.png",
             "https://sein2006.github.io/1.png",
@@ -37,7 +38,7 @@
             
             let img = document.createElement("img");
             img.src = defaultImage;
-            img.dataset.index = i; // Запоминаем индекс
+            img.dataset.index = i; // Запоминаем индекс карты
             div.appendChild(img);
 
             div.onclick = () => {
@@ -50,7 +51,13 @@
 
         function sendChoice() {
             if (!selectedCard) return alert("Выберите карту!");
-            Telegram.WebApp.sendData(selectedCard);
+
+            // Извлекаем индекс карты из ссылки (например, 3 из "https://sein2006.github.io/3.png")
+            let match = selectedCard.match(/\/(\d+)\.png$/);
+            let cardIndex = match ? match[1] : "неизвестно";
+
+            // Отправляем только индекс карты в Telegram WebApp
+            Telegram.WebApp.sendData(cardIndex);
             Telegram.WebApp.close();
         }
     </script>
