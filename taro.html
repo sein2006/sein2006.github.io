@@ -9,6 +9,7 @@
         body { text-align: center; font-family: Arial, sans-serif; }
         .card { width: 100px; height: 150px; margin: 10px; display: inline-block; border: 2px solid black; cursor: pointer; }
         .card img { width: 100%; height: 100%; object-fit: cover; }
+        .selected { border-color: red; } /* Выделение выбранной карты */
     </style>
 </head>
 <body>
@@ -21,10 +22,10 @@
         const defaultImage = "https://sein2006.github.io/0.png";
         const newImages = [
             "https://sein2006.github.io/1.png",
-            "https://sein2006.github.io/1.png",
-            "https://sein2006.github.io/1.png",
-            "https://sein2006.github.io/1.png",
-            "https://sein2006.github.io/1.png"
+            "https://sein2006.github.io/2.png",
+            "https://sein2006.github.io/3.png",
+            "https://sein2006.github.io/4.png",
+            "https://sein2006.github.io/5.png"
         ];
 
         const cardsContainer = document.getElementById("cards");
@@ -32,29 +33,29 @@
         for (let i = 0; i < newImages.length; i++) {
             let div = document.createElement("div");
             div.className = "card";
-            
+            div.dataset.index = i; // Запоминаем индекс карты
+
             let img = document.createElement("img");
             img.src = defaultImage;
-            img.dataset.index = i; // Запоминаем индекс карты
             div.appendChild(img);
 
             div.onclick = () => {
+                document.querySelectorAll(".card").forEach(card => card.classList.remove("selected")); // Убираем выделение
+                div.classList.add("selected"); // Добавляем выделение
+                
                 img.src = newImages[i]; // Меняем изображение при клике
-                selectedCard = newImages[i]; // Запоминаем выбор
-                console.log("Выбрана карта:", newImages[i]); // Лог в консоль
+                selectedCard = i; // Запоминаем **индекс**, а не путь к картинке
+                console.log("Выбрана карта:", i); // Лог в консоль
             };
 
             cardsContainer.appendChild(div);
         }
 
         function sendChoice() {
-            if (!selectedCard) return alert("Выберите карту!");
+            if (selectedCard === null) return alert("Выберите карту!");
 
-            let match = selectedCard.match(/\/(\d+)\.png$/);
-            let cardIndex = match ? match[1] : "неизвестно";
-
-            console.log("Отправка в Telegram:", cardIndex); // Лог в консоль
-            Telegram.WebApp.sendData(cardIndex);
+            console.log("Отправка в Telegram:", selectedCard); // Лог в консоль
+            Telegram.WebApp.sendData(JSON.stringify({ "card": selectedCard })); // Передаем JSON с индексом
             Telegram.WebApp.close();
         }
     </script>
