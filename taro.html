@@ -15,24 +15,30 @@
     <div id="cards"></div>
     <button onclick="sendChoice()">Выбрать</button>
 
-    <script>
-        let selectedCard = null;
-        const cards = ['🃏', '♥️', '♦️', '♣️', '♠️'];
+<script>
+    let selectedCard = null;
+    const imageUrl = "https://sein2006.github.io/0.png"; // Замени на свой URL
+    const cardsContainer = document.getElementById("cards");
 
-        const cardsContainer = document.getElementById("cards");
-        cards.forEach((card, i) => {
-            let div = document.createElement("div");
-            div.className = "card";
-            div.textContent = card;
-            div.onclick = () => { selectedCard = card; alert("Вы выбрали: " + card); };
-            cardsContainer.appendChild(div);
-        });
+    for (let i = 0; i < 5; i++) {
+        let div = document.createElement("div");
+        div.className = "card";
+        div.style.backgroundImage = `url(${imageUrl})`;
+        div.style.backgroundSize = "cover";
+        div.style.backgroundPosition = "center";
+        div.onclick = () => { 
+            selectedCard = i + 1; 
+            alert("Вы выбрали карту " + selectedCard); 
+        };
+        cardsContainer.appendChild(div);
+    }
 
-        function sendChoice() {
-            if (!selectedCard) return alert("Выберите карту!");
-            Telegram.WebApp.sendData(selectedCard);
-            Telegram.WebApp.close();
-        }
-    </script>
+    function sendChoice() {
+        if (!selectedCard) return alert("Выберите карту!");
+        Telegram.WebApp.sendData("Выбрана карта №" + selectedCard);
+        Telegram.WebApp.close();
+    }
+</script>
+
 </body>
 </html>
