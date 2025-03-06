@@ -7,7 +7,8 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { text-align: center; font-family: Arial, sans-serif; }
-        .card { width: 100px; height: 150px; margin: 10px; display: inline-block; border: 2px solid black; }
+        .card { width: 100px; height: 150px; margin: 10px; display: inline-block; border: 2px solid black; cursor: pointer; }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -15,30 +16,43 @@
     <div id="cards"></div>
     <button onclick="sendChoice()">Выбрать</button>
 
-<script>
-    let selectedCard = null;
-    const imageUrl = "https://sein2006.github.io/0.png"; // Замени на свой URL
-    const cardsContainer = document.getElementById("cards");
+    <script>
+        let selectedCard = null;
 
-    for (let i = 0; i < 5; i++) {
-        let div = document.createElement("div");
-        div.className = "card";
-        div.style.backgroundImage = `url(${imageUrl})`;
-        div.style.backgroundSize = "cover";
-        div.style.backgroundPosition = "center";
-        div.onclick = () => { 
-            selectedCard = i + 1; 
-            alert("Вы выбрали карту " + selectedCard); 
-        };
-        cardsContainer.appendChild(div);
-    }
+        // Список картинок (замени ссылки на свои)
+        const defaultImage = "https://sein2006.github.io/0.png";
+        const newImages = [
+            "https://sein2006.github.io/1.png",
+            "https://sein2006.github.io/1.png",
+            "https://sein2006.github.io/1.png",
+            "https://sein2006.github.io/1.png",
+            "https://sein2006.github.io/1.png"
+        ];
 
-    function sendChoice() {
-        if (!selectedCard) return alert("Выберите карту!");
-        Telegram.WebApp.sendData("Выбрана карта №" + selectedCard);
-        Telegram.WebApp.close();
-    }
-</script>
+        const cardsContainer = document.getElementById("cards");
 
+        for (let i = 0; i < newImages.length; i++) {
+            let div = document.createElement("div");
+            div.className = "card";
+            
+            let img = document.createElement("img");
+            img.src = defaultImage;
+            img.dataset.index = i; // Запоминаем индекс
+            div.appendChild(img);
+
+            div.onclick = () => {
+                img.src = newImages[i]; // Меняем изображение при клике
+                selectedCard = newImages[i]; // Запоминаем выбор
+            };
+
+            cardsContainer.appendChild(div);
+        }
+
+        function sendChoice() {
+            if (!selectedCard) return alert("Выберите карту!");
+            Telegram.WebApp.sendData(selectedCard);
+            Telegram.WebApp.close();
+        }
+    </script>
 </body>
 </html>
