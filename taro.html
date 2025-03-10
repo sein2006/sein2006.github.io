@@ -30,6 +30,10 @@
 
         const cardsContainer = document.getElementById("cards");
 
+        // Инициализация Telegram WebApp
+        Telegram.WebApp.ready();
+
+        // Создание карт
         for (let i = 0; i < newImages.length; i++) {
             let div = document.createElement("div");
             div.className = "card";
@@ -51,12 +55,25 @@
             cardsContainer.appendChild(div);
         }
 
+        // Функция отправки данных
         function sendChoice() {
-            if (selectedCard === null) return alert("Выберите карту!");
+            if (selectedCard === null) {
+                console.log("Карта не выбрана");
+                return alert("Выберите карту!");
+            }
 
-            console.log("Отправка в Telegram:", selectedCard); // Лог в консоль
-            Telegram.WebApp.sendData(selectedCard.toString()); // Передаем номер карты как текст
-            Telegram.WebApp.close();
+            console.log("Отправка данных в Telegram:", selectedCard); // Лог в консоль
+
+            // Проверяем, инициализирован ли Telegram WebApp
+            if (typeof Telegram !== "undefined" && Telegram.WebApp && Telegram.WebApp.sendData) {
+                Telegram.WebApp.sendData(selectedCard.toString()); // Передаем номер карты как текст
+                console.log("Данные отправлены в Telegram"); // Лог в консоль
+                Telegram.WebApp.close(); // Закрываем мини-приложение
+                console.log("Мини-приложение закрыто"); // Лог в консоль
+            } else {
+                console.error("Telegram WebApp не инициализирован");
+                alert("Ошибка: Telegram WebApp не инициализирован");
+            }
         }
     </script>
 </body>
