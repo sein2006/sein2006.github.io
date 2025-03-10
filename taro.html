@@ -55,7 +55,7 @@
             if (selectedCard === null) return alert("Выберите карту!");
 
             console.log("Отправка в Telegram:", selectedCard); // Лог в консоль
-            Telegram.WebApp.sendData(JSON.stringify({ "card": selectedCard })); // Передаем JSON с индексом
+            Telegram.WebApp.sendData(selectedCard.toString()); // Передаем номер карты как текст
             Telegram.WebApp.close();
         }
     </script>
