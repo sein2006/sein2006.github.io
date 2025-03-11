@@ -30,7 +30,6 @@
 
         const cardsContainer = document.getElementById("cards");
 
-        // Функция для случайного перемешивания массива (алгоритм Фишера-Йетса)
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -38,41 +37,44 @@
             }
         }
 
-        // Перемешиваем изображения перед отображением
-        shuffleArray(newImages);
+        function renderCards() {
+            cardsContainer.innerHTML = ""; // Очищаем контейнер перед отрисовкой
+
+            newImages.forEach((image, index) => {
+                let div = document.createElement("div");
+                div.className = "card";
+                div.dataset.index = index;
+
+                let img = document.createElement("img");
+                img.src = defaultImage;
+                div.appendChild(img);
+
+                div.onclick = () => {
+                    document.querySelectorAll(".card").forEach(card => card.classList.remove("selected"));
+                    div.classList.add("selected");
+
+                    img.src = image;
+                    selectedCard = index;
+                    console.log("Выбрана карта:", index);
+                };
+
+                cardsContainer.appendChild(div);
+            });
+        }
 
         // Инициализация Telegram WebApp
         Telegram.WebApp.ready();
 
-        // Создание карт
-        newImages.forEach((image, index) => {
-            let div = document.createElement("div");
-            div.className = "card";
-            div.dataset.index = index; // Запоминаем индекс карты
+        window.onload = function () {
+            shuffleArray(newImages); // Перемешивание
+            renderCards(); // Отрисовка
+        };
 
-            let img = document.createElement("img");
-            img.src = defaultImage;
-            div.appendChild(img);
-
-            div.onclick = () => {
-                document.querySelectorAll(".card").forEach(card => card.classList.remove("selected")); // Убираем выделение
-                div.classList.add("selected"); // Добавляем выделение
-                
-                img.src = image; // Меняем изображение при клике
-                selectedCard = index; // Запоминаем индекс
-                console.log("Выбрана карта:", index); // Лог в консоль
-            };
-
-            cardsContainer.appendChild(div);
-        });
-
-        // Функция для извлечения числа из ссылки на изображение
         function extractNumberFromUrl(url) {
             const match = url.match(/(\d+)\.png$/);
             return match ? match[1] : null;
         }
 
-        // Функция отправки данных
         function sendChoice() {
             if (selectedCard === null) {
                 console.log("Карта не выбрана");
