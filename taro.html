@@ -22,10 +22,10 @@
         const defaultImage = "https://sein2006.github.io/0.png";
         const newImages = [
             "https://sein2006.github.io/1.png",
-            "https://sein2006.github.io/1.png",
-            "https://sein2006.github.io/1.png",
-            "https://sein2006.github.io/1.png",
-            "https://sein2006.github.io/1.png"
+            "https://sein2006.github.io/2.png",
+            "https://sein2006.github.io/3.png",
+            "https://sein2006.github.io/4.png",
+            "https://sein2006.github.io/5.png"
         ];
 
         const cardsContainer = document.getElementById("cards");
@@ -55,6 +55,16 @@
             cardsContainer.appendChild(div);
         }
 
+        // Функция для извлечения числа из ссылки на изображение
+        function extractNumberFromUrl(url) {
+            // Используем регулярное выражение для поиска числа перед ".png"
+            const match = url.match(/(\d+)\.png$/);
+            if (match && match[1]) {
+                return match[1]; // Возвращаем найденное число
+            }
+            return null; // Если число не найдено
+        }
+
         // Функция отправки данных
         function sendChoice() {
             if (selectedCard === null) {
@@ -62,11 +72,21 @@
                 return alert("Выберите карту!");
             }
 
-            console.log("Отправка данных в Telegram:", selectedCard); // Лог в консоль
+            // Получаем ссылку на изображение выбранной карты
+            const imageUrl = newImages[selectedCard];
+
+            // Извлекаем число из ссылки
+            const cardNumber = extractNumberFromUrl(imageUrl);
+            if (cardNumber === null) {
+                console.error("Не удалось извлечь число из ссылки на изображение");
+                return alert("Ошибка: неверная ссылка на изображение");
+            }
+
+            console.log("Отправка данных в Telegram:", cardNumber); // Лог в консоль
 
             // Проверяем, инициализирован ли Telegram WebApp
             if (typeof Telegram !== "undefined" && Telegram.WebApp && Telegram.WebApp.sendData) {
-                Telegram.WebApp.sendData(selectedCard.toString()); // Передаем номер карты как текст
+                Telegram.WebApp.sendData(cardNumber); // Передаем число как текст
                 console.log("Данные отправлены в Telegram"); // Лог в консоль
                 Telegram.WebApp.close(); // Закрываем мини-приложение
                 console.log("Мини-приложение закрыто"); // Лог в консоль
