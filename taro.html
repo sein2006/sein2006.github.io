@@ -15,7 +15,6 @@
 <body>
     <h1>Выберите карту</h1>
     <div id="cards"></div>
-    <button onclick="sendChoice()">Выбрать</button>
 
     <script>
         let selectedCard = null;
@@ -33,13 +32,12 @@
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]]; // Меняем местами элементы
+                [array[i], array[j]] = [array[j], array[i]];
             }
         }
 
         function renderCards() {
-            cardsContainer.innerHTML = ""; // Очищаем контейнер перед отрисовкой
-
+            cardsContainer.innerHTML = "";
             newImages.forEach((image, index) => {
                 let div = document.createElement("div");
                 div.className = "card";
@@ -56,19 +54,12 @@
                     img.src = image;
                     selectedCard = index;
                     console.log("Выбрана карта:", index);
+                    sendChoice(); // Автоматическая отправка выбора
                 };
 
                 cardsContainer.appendChild(div);
             });
         }
-
-        // Инициализация Telegram WebApp
-        Telegram.WebApp.ready();
-
-        window.onload = function () {
-            shuffleArray(newImages); // Перемешивание
-            renderCards(); // Отрисовка
-        };
 
         function extractNumberFromUrl(url) {
             const match = url.match(/(\d+)\.png$/);
@@ -76,30 +67,23 @@
         }
 
         function sendChoice() {
-            if (selectedCard === null) {
-                console.log("Карта не выбрана");
-                return alert("Выберите карту!");
-            }
-
+            if (selectedCard === null) return;
             const imageUrl = newImages[selectedCard];
             const cardNumber = extractNumberFromUrl(imageUrl);
-            if (!cardNumber) {
-                console.error("Не удалось извлечь число из ссылки на изображение");
-                return alert("Ошибка: неверная ссылка на изображение");
-            }
+            if (!cardNumber) return;
 
             console.log("Отправка данных в Telegram:", cardNumber);
-
             if (Telegram?.WebApp?.sendData) {
                 Telegram.WebApp.sendData(cardNumber);
-                console.log("Данные отправлены в Telegram");
                 Telegram.WebApp.close();
-                console.log("Мини-приложение закрыто");
-            } else {
-                console.error("Telegram WebApp не инициализирован");
-                alert("Ошибка: Telegram WebApp не инициализирован");
             }
         }
+
+        Telegram.WebApp.ready();
+        window.onload = function () {
+            shuffleArray(newImages);
+            renderCards();
+        };
     </script>
 </body>
 </html>
