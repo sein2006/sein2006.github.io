@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор карт</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        .card { width: 100px; height: 150px; margin: 10px; display: inline-block; border: 2px solid black; cursor: pointer; }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
+        .selected { border-color: red; }
+    </style>
+</head>
+<body>
+    <h1>Выберите три карты</h1>
+    <div id="cards"></div>
+
+    <script>
+        let selectedCards = [];
+        const maxSelections = 3;
+        const defaultImage = "https://sein2006.github.io/0.png";
+        let newImages = [
+            "https://sein2006.github.io/1.png",
+            "https://sein2006.github.io/2.png",
+            "https://sein2006.github.io/3.png",
+            "https://sein2006.github.io/4.png",
+            "https://sein2006.github.io/5.png"
+        ];
+
+        const cardsContainer = document.getElementById("cards");
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function renderCards() {
+            cardsContainer.innerHTML = "";
+            newImages.forEach((image, index) => {
+                let div = document.createElement("div");
+                div.className = "card";
+                div.dataset.index = index;
+
+                let img = document.createElement("img");
+                img.src = defaultImage;
+                div.appendChild(img);
+
+                div.onclick = () => {
+                    if (selectedCards.includes(index)) {
+                        selectedCards = selectedCards.filter(i => i !== index);
+                        div.classList.remove("selected");
+                        img.src = defaultImage;
+                    } else if (selectedCards.length < maxSelections) {
+                        selectedCards.push(index);
+                        div.classList.add("selected");
+                        img.src = image;
+                    }
+                    
+                    if (selectedCards.length === maxSelections) {
+                        sendChoice();
+                    }
+                };
+
+                cardsContainer.appendChild(div);
+            });
+        }
+
+        function extractNumberFromUrl(url) {
+            const match = url.match(/(\d+)\.png$/);
+            return match ? match[1] : null;
+        }
+
+        function sendChoice() {
+            const selectedNumbers = selectedCards.map(index => extractNumberFromUrl(newImages[index]));
+            if (selectedNumbers.length === maxSelections) {
+                console.log("Отправка данных в Telegram:", selectedNumbers);
+                if (Telegram?.WebApp?.sendData) {
+                    Telegram.WebApp.sendData(selectedNumbers.join(","));
+                    Telegram.WebApp.close();
+                }
+            }
+        }
+
+        Telegram.WebApp.ready();
+        window.onload = function () {
+            shuffleArray(newImages);
+            renderCards();
+        };
+    </script>
+</body>
+</html>
